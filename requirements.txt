@@ -1,0 +1,6 @@
+pandas
+chromadb
+dotenv
+sentence-transformers
+ollama
+openpyxl
