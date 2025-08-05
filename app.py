@@ -26,7 +26,6 @@ except Exception as e:
 class SentenceTransformerEmbedding(chromadb.EmbeddingFunction):
     def __init__(self, model):
         self.model = model
-        # Remove name attribute as it's causing issues
     
     def __call__(self, input):
         if isinstance(input, str):
@@ -71,17 +70,13 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
         # Generate embedding for the user query
         query_embedding = embedding_model.encode([user_query], normalize_embeddings=True)[0].tolist()
         
-        # Connect to ChromaDB
         client = chromadb.CloudClient(
             tenant=CHROMA_TENANT,
             database=CHROMA_DATABASE,
             api_key=CHROMA_API_KEY
         )
         
-        # Get collection without embedding function first
         collection = client.get_collection(name=CHROMA_COLLECTION_NAME)
-        
-        # Query ChromaDB for initial results
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=3,  # Get only top 3 results
@@ -151,14 +146,13 @@ Your recommendation: [/INST]"""
         response = ollama.generate(
             model=OLLAMA_MODEL_NAME,
             prompt=prompt,
-            temperature=0.7,
-            max_tokens=200,  # Increased for slightly longer responses
-            top_p=0.9,
+            temperature=0.5,
+            max_tokens=300,
+            top_p=0.5,
             top_k=40
         )
         return response['response'].strip()
     except Exception as e:
-        # Improved fallback response
         fallback = f"I found this excellent match: {product['title']}. "
         fallback += f"This product matches your search criteria and is available for ${product['price']}. "
         if product['stars'] != '0':
@@ -183,7 +177,7 @@ def display_recommendations(products, user_query):
         print(f"🤖 AI Assistant: {ai_recommendation}")
         
         # Display structured details
-        print("\n📋 Product Details:")
+        print("Product Details:")
         print(f"   • Title: {product['title']}")
         print(f"   • Price: ${product['price']}")
         if product['stars'] != '0':

@@ -56,6 +56,17 @@ This project is a command-line interface (CLI) AI shopping assistant that provid
     SENTENCE_TRANSFORMER_MODEL="multi-qa-MiniLM-L6-cos-v1"  # Model for sentence embeddings
     ```
 
+## Data Schema
+
+The project expects an Excel file (`.xlsx`) with your product data. The file should contain the following columns:
+
+- `title`: The name or title of the product.
+- `brand`: The brand of the product.
+- `description`: A detailed description of the product.
+- `price/value`: The price of the product.
+- `stars`: The average user rating for the product (e.g., out of 5).
+- `reviewsCount`: The total number of reviews for the product.
+
 ## Usage
 
 1.  **Populate the Database**:
