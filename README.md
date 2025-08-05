@@ -13,7 +13,8 @@ This project is a command-line interface (CLI) AI shopping assistant that provid
 
 - **Python**: Core programming language.
 - **ChromaDB**: Vector database for storing and querying product embeddings.
-- **Sentence-Transformers**: For creating vector embeddings of product information and user queries.
+- **LangChain**: For integrating sentence-transformer models as embedding functions.
+- **Sentence-Transformers**: Powers the underlying model for creating vector embeddings.
 - **Ollama**: Runs local large language models for generating recommendation text.
 - **Pandas**: For data manipulation and loading product information from Excel files.
 

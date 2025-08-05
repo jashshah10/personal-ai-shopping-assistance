@@ -2,7 +2,7 @@ import pandas as pd
 import chromadb
 import os
 from dotenv import load_dotenv
-from sentence_transformers import SentenceTransformer
+from langchain.embeddings import SentenceTransformerEmbeddings
 
 # --- 1. Configuration and Setup ---
 # Load environment variables from .env file
@@ -20,7 +20,7 @@ CHROMA_COLLECTION_NAME = CHROMA_DATABASE
 
 # Initialize the sentence transformer model
 MODEL_NAME = os.getenv("SENTENCE_TRANSFORMER_MODEL")
-embedding_model = SentenceTransformer(MODEL_NAME)
+embedding_model = SentenceTransformerEmbeddings(model_name=MODEL_NAME)
 
 # --- 3. Load Data from Excel ---
 try:
@@ -49,23 +49,10 @@ except Exception as e:
 
 # --- 5. Get or Create Chroma Collection ---
 try:
-    # Create embedding function using sentence-transformers
-    class SentenceTransformerEmbedding(chromadb.EmbeddingFunction):
-        def __init__(self, model):
-            self.model = model
-            self.name = "sentence_transformer_embedding"
-
-        def __call__(self, input):
-            if isinstance(input, str):
-                input = [input]
-            embeddings = self.model.encode(input, normalize_embeddings=True)
-            return embeddings.tolist()
-
-    # Create collection with explicit embedding function
-    embedding_function = SentenceTransformerEmbedding(model=embedding_model)
+    # Use the embedding model directly as it's already a LangChain embedding function
     collection = client.create_collection(
         name=CHROMA_COLLECTION_NAME,
-        embedding_function=embedding_function
+        embedding_function=embedding_model
     )
     print(f"ChromaDB collection '{CHROMA_COLLECTION_NAME}' created successfully.")
 except Exception as e:

@@ -4,3 +4,4 @@ dotenv
 sentence-transformers
 ollama
 openpyxl
+langchain

@@ -1,7 +1,7 @@
 import chromadb
 import os
 from dotenv import load_dotenv
-from sentence_transformers import SentenceTransformer
+from langchain.embeddings import SentenceTransformerEmbeddings
 import ollama
 
 # --- 1. Configuration and Setup ---
@@ -17,25 +17,11 @@ MODEL_NAME = os.getenv("SENTENCE_TRANSFORMER_MODEL")
 
 # Initialize embedding model
 try:
-    embedding_model = SentenceTransformer(MODEL_NAME)
+    embedding_model = SentenceTransformerEmbeddings(model_name=MODEL_NAME)
     print("Successfully loaded embedding model")
 except Exception as e:
     print(f"Error loading embedding model: {e}")
     exit(1)
-
-class SentenceTransformerEmbedding(chromadb.EmbeddingFunction):
-    def __init__(self, model):
-        self.model = model
-    
-    def __call__(self, input):
-        if isinstance(input, str):
-            input = [input]
-        try:
-            embeddings = self.model.encode(input, normalize_embeddings=True)
-            return embeddings.tolist()
-        except Exception as e:
-            print(f"Embedding error: {e}")
-            raise e
 
 def calculate_ranking_score(product):
     """Calculate a ranking score based on similarity, rating, and review count"""
