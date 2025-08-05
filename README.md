@@ -52,7 +52,7 @@ This project is a command-line interface (CLI) AI shopping assistant that provid
     OLLAMA_MODEL_NAME="llama3.2:3b"  # Name of the Ollama model to use
 
     # -- Data and Model Settings --
-    EXCEL_FILE_PATH="products_cleaned_1.xlsx"  # Path to your Excel file containing product data
+    EXCEL_FILE_PATH="path_to_excel_file"  # Path to your Excel file containing product data
     SENTENCE_TRANSFORMER_MODEL="multi-qa-MiniLM-L6-cos-v1"  # Model for sentence embeddings
     ```
 
