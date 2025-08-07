@@ -3,6 +3,7 @@ import chromadb
 import os
 from dotenv import load_dotenv
 from langchain.embeddings import SentenceTransformerEmbeddings
+from tqdm import tqdm
 
 # --- 1. Configuration and Setup ---
 # Load environment variables from .env file
@@ -94,28 +95,25 @@ try:
 
     if total_docs > 0:
         print(f"Starting to upsert {total_docs} documents in batches of {BATCH_SIZE}...")
-        for i in range(0, total_docs, BATCH_SIZE):
+        for i in tqdm(range(0, total_docs, BATCH_SIZE), desc="Upserting documents to ChromaDB"):
             try:
                 end_i = min(i + BATCH_SIZE, total_docs)
-                print(f"Processing batch {i//BATCH_SIZE + 1}/{(total_docs + BATCH_SIZE - 1)//BATCH_SIZE}")
                 
                 batch_ids = product_ids[i:end_i]
                 batch_documents = documents[i:end_i]
                 batch_metadatas = metadatas[i:end_i]
 
-                print(f"  ... generating embeddings for documents {i+1} to {end_i}")
                 collection.upsert(
                     ids=batch_ids,
                     documents=batch_documents,
                     metadatas=batch_metadatas
                 )
-                print(f"  ... completed batch {i//BATCH_SIZE + 1}")
             except Exception as batch_error:
-                print(f"Error in batch {i//BATCH_SIZE + 1}: {batch_error}")
+                print(f"\nError in batch starting at index {i}: {batch_error}")
                 print(f"Skipping to next batch...")
                 continue
         
-        print(f"Successfully completed processing {total_docs} documents.")
+        print(f"\nSuccessfully completed processing {total_docs} documents.")
     else:
         print("No products found in the CSV file to process.")
 
