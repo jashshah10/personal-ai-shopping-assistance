@@ -51,6 +51,7 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
     Generates an embedding for the user query and finds top 3 semantically similar products
     in ChromaDB using sentence transformers.
     """
+    MIN_SIMILARITY = 0.7  # Only recommend products with similarity >= 0.7 (tune as needed)
     print(f"\nFinding top {num_results} products matching: '{user_query}'...")
     try:
         # Generate embedding for the user query
@@ -65,7 +66,7 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
         collection = client.get_collection(name=CHROMA_COLLECTION_NAME)
         results = collection.query(
             query_embeddings=[query_embedding],
-            n_results=3,  # Get only top 3 results
+            n_results=10,  # Get more results, we'll filter by similarity
             include=['metadatas', 'documents', 'distances']
         )
 
@@ -80,6 +81,8 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
                 results['distances'][0]
             ):
                 similarity_score = 1 - distance
+                if similarity_score < MIN_SIMILARITY:
+                    continue  # Skip low similarity
                 product = {
                     'title': metadata.get('title', 'N/A'),
                     'price': metadata.get('price', '0.00'),
@@ -93,6 +96,9 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
                 recommended_products.append(product)
                 print(f"Added product - Similarity: {similarity_score:.2%}, Rating: {product['stars']}, Reviews: {product['reviews']}")
 
+        # Sort by ranking_score and return top N
+        recommended_products.sort(key=lambda x: x['ranking_score'], reverse=True)
+        recommended_products = recommended_products[:num_results]
         print(f"Final recommendations count: {len(recommended_products)}")
         return recommended_products
 
