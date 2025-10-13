@@ -80,7 +80,6 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
                 results['documents'][0],
                 results['distances'][0]
             ):
-                print(distance, 1 - distance)
                 similarity_score = 1 - distance
                 if similarity_score < MIN_SIMILARITY:
                     continue  # Skip low similarity
