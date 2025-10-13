@@ -51,7 +51,7 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
     Generates an embedding for the user query and finds top 3 semantically similar products
     in ChromaDB using sentence transformers.
     """
-    MIN_SIMILARITY = 0.7  # Only recommend products with similarity >= 0.7 (tune as needed)
+    MIN_SIMILARITY = 0.2  # Only recommend products with similarity >= 0.2 (tune as needed)
     print(f"\nFinding top {num_results} products matching: '{user_query}'...")
     try:
         # Generate embedding for the user query
@@ -80,6 +80,7 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
                 results['documents'][0],
                 results['distances'][0]
             ):
+                print(distance, 1 - distance)
                 similarity_score = 1 - distance
                 if similarity_score < MIN_SIMILARITY:
                     continue  # Skip low similarity
