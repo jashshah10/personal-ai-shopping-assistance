@@ -5,3 +5,4 @@ sentence-transformers
 ollama
 openpyxl
 langchain
+langchain-community

@@ -1,7 +1,7 @@
 import chromadb
 import os
 from dotenv import load_dotenv
-from langchain.embeddings import SentenceTransformerEmbeddings
+from langchain_community.embeddings import SentenceTransformerEmbeddings
 import ollama
 
 # --- 1. Configuration and Setup ---
