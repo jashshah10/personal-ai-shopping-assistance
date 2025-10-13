@@ -6,3 +6,4 @@ ollama
 openpyxl
 langchain
 langchain-community
+langchain-huggingface

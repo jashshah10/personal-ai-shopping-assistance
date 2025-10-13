@@ -1,7 +1,7 @@
 import chromadb
 import os
 from dotenv import load_dotenv
-from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 import ollama
 
 # --- 1. Configuration and Setup ---
@@ -17,7 +17,7 @@ MODEL_NAME = os.getenv("SENTENCE_TRANSFORMER_MODEL")
 
 # Initialize embedding model
 try:
-    embedding_model = SentenceTransformerEmbeddings(model_name=MODEL_NAME)
+    embedding_model = HuggingFaceEmbeddings(model_name=MODEL_NAME)
     print("Successfully loaded embedding model")
 except Exception as e:
     print(f"Error loading embedding model: {e}")
