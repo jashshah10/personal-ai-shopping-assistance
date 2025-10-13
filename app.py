@@ -54,7 +54,7 @@ def get_product_recommendations(user_query: str, num_results: int = 3):
     print(f"\nFinding top {num_results} products matching: '{user_query}'...")
     try:
         # Generate embedding for the user query
-        query_embedding = embedding_model.encode([user_query], normalize_embeddings=True)[0].tolist()
+        query_embedding = embedding_model.embed_query(user_query)
         
         client = chromadb.CloudClient(
             tenant=CHROMA_TENANT,
@@ -175,17 +175,29 @@ def display_recommendations(products, user_query):
         
     print("\n" + "═"*50)
 
-# --- Main Execution Loop ---
-if __name__ == "__main__":
-    print("\n🛍️ AI Shopping Assistant")
-    print("Ask me about any products you're interested in!")
-    print("Type 'exit' to quit.")
+import streamlit as st
 
-    while True:
-        user_input = input("\n🔍 What are you looking for?  ")
-        if user_input.lower() == 'exit':
-            print("👋 Thanks for shopping with AI Assistant. Goodbye!")
-            break
+st.title("🛍️ AI Shopping Assistant")
+st.write("Ask me about any products you're interested in!")
 
-        recommended_products = get_product_recommendations(user_input, num_results=3)
-        display_recommendations(recommended_products, user_input)
+user_input = st.text_input("🔍 What are you looking for?", "")
+
+if user_input:
+    recommended_products = get_product_recommendations(user_input, num_results=3)
+    if not recommended_products:
+        st.warning("No products found matching your request.")
+    else:
+        st.subheader("Personalized Recommendations")
+        for i, product in enumerate(recommended_products, 1):
+            st.markdown(f"### 📦 Recommendation #{i}")
+            ai_recommendation = generate_recommendation_text(product, user_input)
+            st.info(f"🤖 AI Assistant: {ai_recommendation}")
+            with st.expander("Product Details"):
+                st.write(f"**Title:** {product['title']}")
+                st.write(f"**Price:** ${product['price']}")
+                if product['stars'] != '0':
+                    st.write(f"**Rating:** {product['stars']} ⭐")
+                if product['reviews'] != '0':
+                    st.write(f"**Reviews:** {product['reviews']}")
+                st.write(f"**Relevance:** {product['similarity_score']:.2%}")
+                st.write(f"**Overall Score:** {product['ranking_score']:.2%}")
